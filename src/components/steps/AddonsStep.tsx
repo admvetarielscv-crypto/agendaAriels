@@ -6,6 +6,8 @@ interface AddonsStepProps {
   update: <K extends keyof FormData>(field: K, value: FormData[K]) => void;
   onNext: () => void;
   onBack: () => void;
+  onAddAnother?: () => void;
+  onContinue?: () => void;
 }
 
 const OPTIONS = [
@@ -22,7 +24,7 @@ export function AddonsStep({ formData, update, onNext }: AddonsStepProps) {
   return (
     <div>
       <h2 className="mb-8 text-center text-2xl font-bold text-gray-800">
-        Elige un horario
+        Elige un horario de recojo
       </h2>
       <div className="grid grid-cols-2 gap-6">
         {OPTIONS.map(({ value, label, sub }) => {

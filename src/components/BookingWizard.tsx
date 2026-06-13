@@ -4,29 +4,73 @@ import { ServiceTypeStep } from "./steps/ServiceTypeStep";
 import { PetInfoStep } from "./steps/PetInfoStep";
 import { OwnerInfoStep } from "./steps/OwnerInfoStep";
 import { AddressStep } from "./steps/AddressStep";
+import { MascotaAgregadaStep } from "./steps/MascotaAgregadaStep";
 import { ScheduleStep } from "./steps/ScheduleStep";
 import { AddonsStep } from "./steps/AddonsStep";
 import { ReviewStep } from "./steps/ReviewStep";
 import { ConfirmationStep } from "./steps/ConfirmationStep";
 
+export interface PetData {
+  petType: "dog" | "cat";
+  service: "bath" | "bath_cut";
+  extraServices: string[];
+  size: "small" | "medium" | "large";
+  coat: "normal" | "knotted";
+  petNotes: string;
+  petName: string;
+  corteType: "rapado" | "rebaje" | "tijera" | null;
+  corteSpecs: string;
+  corteImage: string;
+}
+
 export interface FormData {
   petType: "dog" | "cat" | null;
   service: "bath" | "bath_cut" | null;
+  extraServices: string[];
   size: "small" | "medium" | "large" | null;
   coat: "normal" | "knotted" | null;
+  petNotes: string;
+  petName: string;
+  corteType: "rapado" | "rebaje" | "tijera" | null;
+  corteSpecs: string;
+  corteImage: string;
+  pets: PetData[];
   date: string | null;
   timeRange: "9-11" | "11-14" | null;
   ownerName: string;
   ownerPhone: string;
   ownerAddress: string;
-  petNotes: string;
+  hasHistory: boolean | null;
+  ownerDni: string;
+  registeredPetName: string;
+  registeredPhone: string;
+  petBirthDate: string;
+  petSpecies: "dog" | "cat" | null;
+  petBreed: string;
+  petCastrated: boolean;
+  mobilityPhoneDifferent: boolean;
+  mobilityPhone: string;
 }
+
+const INITIAL_PET_FIELDS = {
+  petType: null as "dog" | "cat" | null,
+  service: null as "bath" | "bath_cut" | null,
+  extraServices: [] as string[],
+  size: null as "small" | "medium" | "large" | null,
+  coat: null as "normal" | "knotted" | null,
+  petNotes: "",
+  petName: "",
+  corteType: null as "rapado" | "rebaje" | "tijera" | null,
+  corteSpecs: "",
+  corteImage: "",
+};
 
 const STEPS = [
   ServiceTypeStep,
   PetInfoStep,
   OwnerInfoStep,
   AddressStep,
+  MascotaAgregadaStep,
   ScheduleStep,
   AddonsStep,
   ReviewStep,
@@ -38,6 +82,7 @@ const STEP_LABELS = [
   "Servicio",
   "Tamaño",
   "Pelaje",
+  "Mascota Agregada",
   "Fecha",
   "Horario",
   "Tus datos",
@@ -47,28 +92,72 @@ const STEP_LABELS = [
 export function BookingWizard() {
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<FormData>({
-    petType: null,
-    service: null,
-    size: null,
-    coat: null,
+    ...INITIAL_PET_FIELDS,
+    corteType: null,
+    corteSpecs: "",
+    corteImage: "",
+    pets: [],
     date: null,
     timeRange: null,
     ownerName: "",
     ownerPhone: "",
     ownerAddress: "",
-    petNotes: "",
+    hasHistory: null,
+    ownerDni: "",
+    registeredPetName: "",
+    registeredPhone: "",
+    petBirthDate: "",
+    petSpecies: null,
+    petBreed: "",
+    petCastrated: false,
+    mobilityPhoneDifferent: false,
+    mobilityPhone: "",
   });
 
   const StepComponent = STEPS[currentStep];
   const totalSteps = STEPS.length;
   const progress = ((currentStep + 1) / totalSteps) * 100;
 
+  const saveCurrentPet = () => {
+    if (!formData.petType || !formData.service || !formData.size || !formData.coat) return;
+    const pet: PetData = {
+      petType: formData.petType,
+      service: formData.service,
+      extraServices: formData.extraServices,
+      size: formData.size,
+      coat: formData.coat,
+      petNotes: formData.petNotes,
+      petName: formData.petName,
+      corteType: formData.corteType,
+      corteSpecs: formData.corteSpecs,
+      corteImage: formData.corteImage,
+    };
+    setFormData((prev) => ({ ...prev, pets: [...prev.pets, pet] }));
+  };
+
   const handleNext = () => {
     setCurrentStep((prev) => Math.min(prev + 1, totalSteps - 1));
   };
 
   const handleBack = () => {
-    setCurrentStep((prev) => Math.max(prev - 1, 0));
+    setCurrentStep((prev) => {
+      if (prev === 5) {
+        setFormData((f) => ({ ...f, pets: f.pets.slice(0, -1) }));
+        return 3;
+      }
+      return Math.max(prev - 1, 0);
+    });
+  };
+
+  const handleAddAnother = () => {
+    saveCurrentPet();
+    setFormData((prev) => ({ ...prev, ...INITIAL_PET_FIELDS }));
+    setCurrentStep(0);
+  };
+
+  const handleContinue = () => {
+    saveCurrentPet();
+    setCurrentStep(5);
   };
 
   const update = <K extends keyof FormData>(field: K, value: FormData[K]) => {
@@ -99,6 +188,8 @@ export function BookingWizard() {
             update={update}
             onNext={handleNext}
             onBack={handleBack}
+            onAddAnother={handleAddAnother}
+            onContinue={handleContinue}
           />
 
           {currentStep > 0 && (

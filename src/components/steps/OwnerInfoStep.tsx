@@ -6,12 +6,15 @@ interface OwnerInfoStepProps {
   update: <K extends keyof FormData>(field: K, value: FormData[K]) => void;
   onNext: () => void;
   onBack: () => void;
+  onAddAnother?: () => void;
+  onContinue?: () => void;
 }
 
 const OPTIONS = [
-  { value: "small" as const, label: "Pequeño", icon: Rat },
-  { value: "medium" as const, label: "Mediano", icon: Dog },
-  { value: "large" as const, label: "Grande", icon: Tractor },
+  { value: "small" as const, label: "2kg - 10kg", icon: Rat },
+  { value: "medium" as const, label: "10kg - 20kg", icon: Dog },
+  { value: "large" as const, label: "20kg - 30kg", icon: Tractor },
+  
 ];
 
 export function OwnerInfoStep({ formData, update, onNext }: OwnerInfoStepProps) {

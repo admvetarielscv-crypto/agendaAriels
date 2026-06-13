@@ -9,6 +9,8 @@ interface ScheduleStepProps {
   update: <K extends keyof FormData>(field: K, value: FormData[K]) => void;
   onNext: () => void;
   onBack: () => void;
+  onAddAnother?: () => void;
+  onContinue?: () => void;
 }
 
 export function ScheduleStep({ formData, update, onNext }: ScheduleStepProps) {
