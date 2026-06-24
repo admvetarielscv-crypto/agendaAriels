@@ -118,7 +118,7 @@ export function PetInfoStep({ formData, update, onNext }: PetInfoStepProps) {
                   update("corteImage", "");
                 }
               }}
-              className={`flex cursor-pointer flex-col items-center gap-5 rounded-2xl border-2 p-10 transition-all duration-200 ${
+              className={`flex cursor-pointer flex-col items-center gap-5 rounded-2xl border-2 p-10 transition-all duration-200 hover:scale-[1.02] active:scale-[0.97] ${
                 selected ? "border-blue-500 bg-blue-50 shadow-md shadow-blue-100"
                          : "border-gray-200 bg-white shadow-sm hover:border-blue-300 hover:shadow-md hover:shadow-gray-200"
               }`}
@@ -130,31 +130,69 @@ export function PetInfoStep({ formData, update, onNext }: PetInfoStepProps) {
         })}
       </div>
 
-      {/* Bath Type Selection */}
-      <div className="mt-10">
-        <h3 className="mb-6 text-center text-lg font-semibold text-gray-700">Seleccione el tipo de baño</h3>
-        <div className="grid grid-cols-3 gap-4">
-          {BATH_OPTIONS.map(({ value, label, description, icon: Icon }) => {
-            const selected = formData.bathType === value;
-            return (
-              <button key={value} type="button"
-                onClick={() => { setError(null); update("bathType", value); }}
-                className={`flex cursor-pointer flex-col items-center gap-3 rounded-2xl border-2 p-5 transition-all duration-200 ${
-                  selected
-                    ? "border-blue-500 bg-blue-50 shadow-md shadow-blue-100"
-                    : "border-gray-200 bg-white shadow-sm hover:border-blue-300 hover:shadow-md hover:shadow-gray-200"
-                }`}
-              >
-                <Icon className={`h-10 w-10 transition-colors ${selected ? "text-blue-600" : "text-gray-600"}`} />
-                <span className={`text-center text-sm font-semibold leading-tight ${selected ? "text-blue-700" : "text-gray-700"}`}>
+      {/* Services detail card: Bath type + Extras */}
+      <div className="mt-10 rounded-2xl border border-slate-200 bg-slate-50 p-6 shadow-sm">
+        {/* Bath Type Selection */}
+        <div>
+          <div className="mb-1 flex items-center gap-2">
+            <div className="h-1 w-6 rounded-full bg-blue-500" />
+            <h3 className="text-sm font-semibold uppercase tracking-wide text-blue-600">
+              Tipo de baño
+            </h3>
+          </div>
+          <div className="grid grid-cols-3 gap-4">
+            {BATH_OPTIONS.map(({ value, label, description, icon: Icon }) => {
+              const selected = formData.bathType === value;
+              return (
+                <button key={value} type="button"
+                  onClick={() => { setError(null); update("bathType", value); }}
+                  className={`flex cursor-pointer flex-col items-center gap-3 rounded-2xl border-2 p-5 transition-all duration-200 hover:scale-[1.02] active:scale-[0.97] ${
+                    selected
+                      ? "border-blue-500 bg-blue-50 shadow-md shadow-blue-100"
+                      : "border-gray-200 bg-white shadow-sm hover:border-blue-300 hover:shadow-md hover:shadow-gray-200"
+                  }`}
+                >
+                  <Icon className={`h-10 w-10 transition-colors ${selected ? "text-blue-600" : "text-gray-600"}`} />
+                  <span className={`text-center text-sm font-semibold leading-tight ${selected ? "text-blue-700" : "text-gray-700"}`}>
+                    {label}
+                  </span>
+                  <span className="text-center text-xs leading-tight text-gray-500">
+                    {description}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="my-6 border-t border-slate-200" />
+
+        {/* Extra Services */}
+        <div>
+          <div className="mb-4 flex items-center gap-2">
+            <div className="h-1 w-6 rounded-full bg-orange-500" />
+            <h3 className="text-sm font-semibold uppercase tracking-wide text-orange-600">
+              Servicios adicionales
+            </h3>
+          </div>
+          <div className="grid grid-cols-3 gap-4">
+            {EXTRA_OPTIONS.map(({ value, label }) => {
+              const checked = (formData.extraServices || []).includes(value);
+              return (
+                <button key={value} type="button" onClick={() => toggleExtra(value)}
+                  className={`flex cursor-pointer items-center justify-center gap-2 rounded-xl border-2 px-4 py-4 text-sm font-medium transition-all duration-200 ${
+                    checked ? "border-orange-500 bg-orange-50 text-orange-800 shadow-md"
+                            : "border-slate-200 bg-white text-gray-600 hover:border-orange-300 hover:bg-orange-50"
+                  }`}
+                >
+                  <span className={`flex h-5 w-5 items-center justify-center rounded-md border-2 text-xs font-bold transition-all ${
+                    checked ? "border-orange-500 bg-orange-500 text-white" : "border-slate-200 bg-white text-transparent"
+                  }`}>✓</span>
                   {label}
-                </span>
-                <span className="text-center text-xs leading-tight text-gray-500">
-                  {description}
-                </span>
-              </button>
-            );
-          })}
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
 
@@ -162,7 +200,7 @@ export function PetInfoStep({ formData, update, onNext }: PetInfoStepProps) {
       <div className={`overflow-hidden transition-all duration-500 ease-in-out ${
         showCorte ? "mt-10 max-h-[1000px] opacity-100" : "max-h-0 opacity-0"
       }`}>
-        <div className="rounded-2xl border border-sky-200 bg-sky-50/70 backdrop-blur-sm p-6 shadow-sm">
+        <div className="rounded-2xl border border-orange-200 bg-orange-50/40 p-6 shadow-sm">
           <h3 className="mb-6 text-center text-xl font-bold text-gray-800">Detalles del Corte</h3>
           <div className="mb-6">
             <p className="mb-3 text-sm font-semibold text-gray-700">Tipo de corte</p>
@@ -173,8 +211,8 @@ export function PetInfoStep({ formData, update, onNext }: PetInfoStepProps) {
                   <button key={value} type="button"
                     onClick={() => { setError(null); update("corteType", value); }}
                     className={`cursor-pointer rounded-xl border-2 px-4 py-3 text-sm font-medium transition-all duration-200 ${
-                      selected ? "border-sky-500 bg-sky-100 text-sky-800 shadow-md"
-                               : "border-sky-200 bg-white text-gray-600 hover:border-sky-300 hover:bg-sky-50"
+                      selected ? "border-orange-500 bg-orange-100 text-orange-800 shadow-md"
+                               : "border-orange-200 bg-white text-gray-600 hover:border-orange-300 hover:bg-orange-50"
                     }`}
                   >{label}</button>
                 );
@@ -187,7 +225,7 @@ export function PetInfoStep({ formData, update, onNext }: PetInfoStepProps) {
               onChange={(e) => update("corteSpecs", e.target.value)}
               placeholder="Ej: Dejar punta de cola tipo pompón, no tocar bigotes, no cortar mucho las orejas..."
               rows={4}
-              className="w-full rounded-xl border border-gray-300 px-4 py-3 text-gray-800 outline-none transition-colors focus:border-sky-400 focus:ring-2 focus:ring-sky-200" />
+              className="w-full rounded-xl border border-gray-300 px-4 py-3 text-gray-800 outline-none transition-colors focus:border-orange-400 focus:ring-2 focus:ring-orange-200" />
           </div>
           <div className="mb-4 rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-700">
             ⚠️ Importante: Si su mascota presenta nudos o el pelaje muy motado, por salud y bienestar dermatológico, el estilista podría recomendar obligatoriamente un corte rapado. Los nudos severos atrapan la humedad, impiden un secado correcto y pueden generar hongos o infecciones en la piel.
@@ -198,7 +236,7 @@ export function PetInfoStep({ formData, update, onNext }: PetInfoStepProps) {
             <div className="flex items-center gap-4">
               <input ref={fileInputRef} type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
               <button type="button" onClick={() => fileInputRef.current?.click()}
-                className="flex cursor-pointer items-center gap-2 rounded-xl border-2 border-dashed border-sky-300 bg-white px-5 py-3 text-sm font-medium text-gray-600 transition-all hover:border-sky-500 hover:text-sky-600">
+                className="flex cursor-pointer items-center gap-2 rounded-xl border-2 border-dashed border-orange-300 bg-white px-5 py-3 text-sm font-medium text-gray-600 transition-all hover:border-orange-500 hover:text-orange-600">
                 <Upload className="h-5 w-5" /> Subir foto
               </button>
               {formData.corteImage && (
@@ -215,32 +253,14 @@ export function PetInfoStep({ formData, update, onNext }: PetInfoStepProps) {
         </div>
       </div>
 
-      {/* Extra Services */}
-      <div className="mt-10">
-        <h3 className="mb-4 text-center text-lg font-semibold text-gray-700">Servicios adicionales</h3>
-        <div className="grid grid-cols-3 gap-4">
-          {EXTRA_OPTIONS.map(({ value, label }) => {
-            const checked = (formData.extraServices || []).includes(value);
-            return (
-              <button key={value} type="button" onClick={() => toggleExtra(value)}
-                className={`flex cursor-pointer items-center justify-center gap-2 rounded-xl border-2 px-4 py-4 text-sm font-medium transition-all duration-200 ${
-                  checked ? "border-sky-500 bg-sky-100 text-sky-800 shadow-md"
-                          : "border-sky-200 bg-white text-gray-600 hover:border-sky-300 hover:bg-sky-50"
-                }`}
-              >
-                <span className={`flex h-5 w-5 items-center justify-center rounded-md border-2 text-xs font-bold transition-all ${
-                  checked ? "border-sky-500 bg-sky-500 text-white" : "border-sky-200 bg-white text-transparent"
-                }`}>✓</span>
-                {label}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
       {/* Perfume Aroma */}
-      <div className="mt-10">
-        <h3 className="mb-4 text-center text-lg font-semibold text-gray-700">Aroma del perfume</h3>
+      <div className="mt-10 rounded-2xl border border-slate-200 bg-slate-50 p-6 shadow-sm">
+        <div className="mb-1 flex items-center gap-2">
+          <div className="h-1 w-6 rounded-full bg-orange-500" />
+          <h3 className="text-sm font-semibold uppercase tracking-wide text-orange-600">
+            Aroma del perfume
+          </h3>
+        </div>
         <div className="flex justify-center gap-4">
           {(["fruital", "floral", "fresco"] as const).map((value) => {
             const labels: Record<string, string> = { fruital: "🍓 Frutal", floral: "🌸 Floral", fresco: "🍃 Fresco" };
@@ -248,7 +268,7 @@ export function PetInfoStep({ formData, update, onNext }: PetInfoStepProps) {
             return (
               <button key={value} type="button"
                 onClick={() => update("perfume", value)}
-                className={`cursor-pointer rounded-xl border-2 px-6 py-3 text-sm font-medium transition-all duration-200 ${
+                className={`cursor-pointer rounded-xl border-2 px-6 py-3 text-sm font-medium transition-all duration-200 hover:scale-[1.02] active:scale-[0.97] ${
                   selected
                     ? "border-blue-500 bg-blue-50 text-blue-700 shadow-md"
                     : "border-gray-200 bg-white text-gray-600 hover:border-blue-300 hover:bg-blue-50"
@@ -266,7 +286,7 @@ export function PetInfoStep({ formData, update, onNext }: PetInfoStepProps) {
       )}
 
       <button onClick={handleContinue}
-        className="mt-10 w-full cursor-pointer rounded-xl bg-blue-600 py-4 text-lg font-bold text-white shadow-md transition-all hover:bg-blue-700">
+        className="mt-10 w-full cursor-pointer rounded-xl bg-blue-600 py-4 text-lg font-bold text-white shadow-md transition-all hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-200/50 active:scale-[0.98]">
         Continuar
       </button>
     </div>

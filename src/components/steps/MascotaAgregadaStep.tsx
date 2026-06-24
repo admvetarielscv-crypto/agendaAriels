@@ -39,11 +39,14 @@ export function MascotaAgregadaStep({ formData, onAddAnother, onContinue }: Masc
 
   return (
     <div className="flex flex-col items-center gap-6 py-6">
-      <CheckCircle className="h-24 w-24 text-green-500" />
+      <div className="relative">
+        <div className="absolute -inset-3 rounded-full bg-blue-100/60" />
+        <CheckCircle className="relative h-24 w-24 text-blue-600" />
+      </div>
       <h2 className="text-center text-3xl font-bold text-gray-800">
         ¡Mascota agregada!
       </h2>
-      <p className="text-center text-gray-500">
+      <p className="max-w-md text-center text-gray-500">
         {currentPet.petName || "Mascota"} — {PET_TYPE_LABELS[currentPet.petType]} | {SERVICE_LABELS[currentPet.service]} | {SIZE_LABELS[currentPet.size]}
         {currentPet.perfume && <> | {PERFUME_LABELS[currentPet.perfume]}</>}
         {extraSummary && <> | {extraSummary}</>}
@@ -52,13 +55,13 @@ export function MascotaAgregadaStep({ formData, onAddAnother, onContinue }: Masc
       <div className="mt-4 flex w-full flex-col gap-4">
         <button
           onClick={onAddAnother}
-          className="w-full cursor-pointer rounded-xl border-2 border-blue-500 bg-white py-4 text-lg font-semibold text-blue-600 transition-all hover:bg-blue-50"
+          className="w-full cursor-pointer rounded-xl border-2 border-orange-500 bg-white py-4 text-lg font-semibold text-orange-600 shadow-sm transition-all hover:bg-orange-50 hover:shadow-md active:scale-[0.98]"
         >
           Agregar otra mascota
         </button>
         <button
           onClick={onContinue}
-          className="w-full cursor-pointer rounded-xl bg-blue-600 py-4 text-lg font-semibold text-white shadow-md transition-all hover:bg-blue-700"
+          className="w-full cursor-pointer rounded-xl bg-blue-600 py-4 text-lg font-semibold text-white shadow-md transition-all hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-200/50 active:scale-[0.98]"
         >
           Continuar con el recojo
         </button>

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { CheckCircle, MapPin } from "lucide-react";
+import { CheckCircle, MapPin, ExternalLink } from "lucide-react";
 import type { FormData, PetData } from "../BookingWizard";
 
 interface ConfirmationStepProps {
@@ -164,7 +164,19 @@ export function ConfirmationStep({ formData, onBack: _onBack }: ConfirmationStep
         </div>
         <div className="flex justify-between">
           <span className="text-gray-500">Dirección</span>
-          <span className="font-medium text-gray-800">{formData.ownerAddress || "-"}</span>
+          <div className="flex items-center gap-2">
+            <span className="font-medium text-gray-800">{formData.ownerAddress || "-"}</span>
+            {formData.ownerLat && formData.ownerLng && (
+              <a
+                href={`https://www.google.com/maps?q=${formData.ownerLat},${formData.ownerLng}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1 text-blue-600 hover:text-blue-800 transition-colors"
+              >
+                <ExternalLink className="h-4 w-4" />
+              </a>
+            )}
+          </div>
         </div>
         {formData.mobilityPhoneDifferent && formData.mobilityPhone && (
           <div className="flex justify-between">
@@ -176,7 +188,7 @@ export function ConfirmationStep({ formData, onBack: _onBack }: ConfirmationStep
 
       <button
         onClick={() => setSubmitted(true)}
-        className="w-full cursor-pointer rounded-xl bg-green-600 py-4 text-lg font-bold text-white shadow-md transition-all hover:bg-green-700"
+        className="w-full cursor-pointer rounded-xl bg-blue-600 py-4 text-lg font-bold text-white shadow-md transition-all hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-200/50 active:scale-[0.98]"
       >
         Confirmar Solicitud
       </button>

@@ -33,7 +33,7 @@ export function ServiceTypeStep({ formData, update, onNext }: ServiceTypeStepPro
             <button
               key={value}
               onClick={() => handleSelect(value)}
-              className={`flex cursor-pointer flex-col items-center gap-5 rounded-2xl border-2 p-10 transition-all duration-200 ${
+              className={`flex cursor-pointer flex-col items-center gap-5 rounded-2xl border-2 p-10 transition-all duration-200 hover:scale-[1.02] active:scale-[0.97] ${
                 selected
                   ? "border-blue-500 bg-blue-50 shadow-md shadow-blue-100"
                   : "border-gray-200 bg-white shadow-sm hover:border-blue-300 hover:shadow-md hover:shadow-gray-200"

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft } from "lucide-react";
 import { BranchSelectionStep } from "./steps/BranchSelectionStep";
 import { ServiceTypeStep } from "./steps/ServiceTypeStep";
@@ -45,6 +46,8 @@ export interface FormData {
   ownerName: string;
   ownerPhone: string;
   ownerAddress: string;
+  ownerLat: number | null;
+  ownerLng: number | null;
   hasHistory: boolean | null;
   ownerDni: string;
   registeredPetName: string;
@@ -112,6 +115,8 @@ export function BookingWizard() {
     ownerName: "",
     ownerPhone: "",
     ownerAddress: "",
+    ownerLat: null,
+    ownerLng: null,
     hasHistory: null,
     ownerDni: "",
     registeredPetName: "",
@@ -178,36 +183,53 @@ export function BookingWizard() {
 
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
-      <div className="w-full max-w-2xl rounded-2xl bg-white shadow-xl">
+      <div className="w-full max-w-2xl rounded-2xl border-t-4 border-t-orange-500 bg-white shadow-xl">
         <div className="p-6 sm:p-8">
           <div className="mb-6">
             <div className="mb-2 flex items-center justify-between text-sm text-gray-500">
-              <span className="font-medium text-gray-700">
-                Paso {currentStep + 1} de {totalSteps}
+              <span className="flex items-center gap-2 font-medium text-gray-700">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">
+                  {currentStep + 1}
+                </span>
+                <span>Paso {currentStep + 1} de {totalSteps}</span>
               </span>
-              <span>{STEP_LABELS[currentStep]}</span>
+              <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
+                {STEP_LABELS[currentStep]}
+              </span>
             </div>
             <div className="h-2 w-full overflow-hidden rounded-full bg-gray-100">
               <div
-                className="h-full rounded-full bg-blue-500 transition-all duration-300 ease-out"
+                className="h-full rounded-full bg-gradient-to-r from-blue-500 to-orange-400 transition-all duration-300 ease-out"
                 style={{ width: `${progress}%` }}
               />
             </div>
           </div>
 
-          <StepComponent
-            formData={formData}
-            update={update}
-            onNext={handleNext}
-            onBack={handleBack}
-            onAddAnother={handleAddAnother}
-            onContinue={handleContinue}
-          />
+          <div className="relative">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentStep}
+                initial={{ opacity: 0, x: 30 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -30 }}
+                transition={{ duration: 0.25, ease: "easeInOut" }}
+              >
+                <StepComponent
+                  formData={formData}
+                  update={update}
+                  onNext={handleNext}
+                  onBack={handleBack}
+                  onAddAnother={handleAddAnother}
+                  onContinue={handleContinue}
+                />
+              </motion.div>
+            </AnimatePresence>
+          </div>
 
           {currentStep > 0 && (
             <button
               onClick={handleBack}
-              className="mt-8 flex items-center gap-1 text-sm text-gray-500 transition-colors hover:text-gray-800"
+              className="mt-8 flex items-center gap-1 text-sm text-gray-500 transition-colors hover:text-orange-600"
             >
               <ChevronLeft className="h-4 w-4" />
               Volver atrás
