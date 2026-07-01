@@ -43,7 +43,7 @@ export function MascotaAgregadaStep({ formData, onAddAnother, onContinue }: Masc
         <div className="absolute -inset-3 rounded-full bg-blue-100/60" />
         <CheckCircle className="relative h-24 w-24 text-blue-600" />
       </div>
-      <h2 className="text-center text-3xl font-bold text-gray-800">
+      <h2 className="text-center text-3xl font-bold tracking-tight text-gray-800">
         ¡Mascota agregada!
       </h2>
       <p className="max-w-md text-center text-gray-500">

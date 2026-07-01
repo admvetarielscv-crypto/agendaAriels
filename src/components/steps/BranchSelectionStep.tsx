@@ -33,7 +33,7 @@ export function BranchSelectionStep({ formData, update, onNext }: BranchSelectio
 
   return (
     <div>
-      <h2 className="mb-2 text-center text-2xl font-bold text-gray-800">
+      <h2 className="mb-2 text-center text-2xl font-bold tracking-tight text-gray-800">
         Seleccione su sede más cercana
       </h2>
       <p className="mb-8 text-center text-sm text-gray-500">
@@ -52,7 +52,7 @@ export function BranchSelectionStep({ formData, update, onNext }: BranchSelectio
                   : "border-gray-200 shadow-sm hover:border-blue-300 hover:shadow-md"
               }`}
             >
-              <div className="relative h-40 overflow-hidden">
+              <div className="relative h-52 overflow-hidden">
                 <img
                   src={image}
                   alt={label}
@@ -71,15 +71,15 @@ export function BranchSelectionStep({ formData, update, onNext }: BranchSelectio
                   {address}
                 </div>
               </div>
-              <div className="flex flex-col gap-1 px-5 py-4">
+              <div className="flex flex-col gap-1 px-6 py-5">
                 <span
-                  className={`text-base font-bold leading-tight transition-colors ${
+                  className={`text-lg font-bold leading-tight transition-colors ${
                     isSelected ? "text-blue-700" : "text-gray-800"
                   }`}
                 >
                   {label}
                 </span>
-                <span className="text-xs text-gray-400">
+                <span className="text-sm text-gray-400">
                   {isSelected ? "Sede seleccionada" : "Haz clic para elegir"}
                 </span>
               </div>

@@ -97,7 +97,7 @@ export function ConfirmationStep({ formData, onBack: _onBack }: ConfirmationStep
     return (
       <div className="flex flex-col items-center gap-6 py-10">
         <CheckCircle className="h-24 w-24 text-green-500" />
-        <h2 className="text-3xl font-bold text-gray-800">
+        <h2 className="text-3xl font-bold tracking-tight text-gray-800">
           ¡Solicitud enviada con éxito!
         </h2>
         <p className="text-center text-gray-500">
@@ -109,7 +109,7 @@ export function ConfirmationStep({ formData, onBack: _onBack }: ConfirmationStep
 
   return (
     <div>
-      <h2 className="mb-6 text-center text-2xl font-bold text-gray-800">
+      <h2 className="mb-6 text-center text-2xl font-bold tracking-tight text-gray-800">
         Resumen de tu solicitud
       </h2>
 

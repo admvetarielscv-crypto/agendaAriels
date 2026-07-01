@@ -183,7 +183,7 @@ export function BookingWizard() {
 
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
-      <div className="w-full max-w-2xl lg:max-w-4xl 2xl:max-w-5xl rounded-2xl border-t-4 border-t-orange-500 bg-white shadow-xl">
+      <div className="w-full max-w-2xl lg:max-w-5xl 2xl:max-w-6xl rounded-2xl border-t-4 border-t-orange-500 bg-white shadow-xl">
         <div className="p-6 sm:p-8 lg:p-10">
           {/* Brand Header */}
           <div className="mb-6">
