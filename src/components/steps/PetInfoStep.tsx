@@ -184,13 +184,13 @@ export function PetInfoStep({ formData, update, onNext }: PetInfoStepProps) {
               Tipo de baño
             </h3>
           </div>
-          <div className="grid grid-cols-3 gap-4 lg:gap-6">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
             {BATH_OPTIONS.map(({ value, label, description, icon: Icon }) => {
               const selected = formData.bathType === value;
               return (
                 <button key={value} type="button"
                   onClick={() => { setError(null); update("bathType", value); }}
-                  className={`flex cursor-pointer flex-col items-center gap-3 rounded-2xl border-2 p-5 transition-all duration-200 hover:scale-[1.02] active:scale-[0.97] lg:gap-4 lg:p-7 ${
+                  className={`flex cursor-pointer flex-col items-center gap-3 rounded-2xl border-2 p-4 transition-all duration-200 hover:scale-[1.02] active:scale-[0.97] sm:p-5 lg:gap-4 lg:p-7 ${
                     selected
                       ? "border-blue-500 bg-blue-50 shadow-md shadow-blue-100"
                       : "border-gray-200 bg-white shadow-sm hover:border-blue-300 hover:shadow-md hover:shadow-gray-200"
@@ -219,7 +219,7 @@ export function PetInfoStep({ formData, update, onNext }: PetInfoStepProps) {
               Servicios adicionales
             </h3>
           </div>
-          <div className="grid grid-cols-3 gap-4 lg:gap-6">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4 lg:gap-6">
             {EXTRA_OPTIONS.map(({ value, label }) => {
               const checked = (formData.extraServices || []).includes(value);
               return (
@@ -305,7 +305,7 @@ export function PetInfoStep({ formData, update, onNext }: PetInfoStepProps) {
             Aroma del perfume
           </h3>
         </div>
-        <div className="flex justify-center gap-4 lg:gap-6">
+        <div className="flex flex-wrap justify-center gap-3 sm:gap-4 lg:gap-6">
           {(["fruital", "floral", "fresco"] as const).map((value) => {
             const labels: Record<string, string> = { fruital: "🍓 Frutal", floral: "🌸 Floral", fresco: "🍃 Fresco" };
             const selected = formData.perfume === value;

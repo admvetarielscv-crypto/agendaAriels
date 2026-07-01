@@ -26,26 +26,26 @@ export function AddonsStep({ formData, update, onNext }: AddonsStepProps) {
       <h2 className="mb-8 text-center text-2xl font-bold tracking-tight text-gray-800">
         Elige un horario de recojo
       </h2>
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6">
         {OPTIONS.map(({ value, label, sub, icon: Icon }) => {
           const selected = formData.timeRange === value;
           return (
             <button
               key={value}
               onClick={() => handleSelect(value)}
-              className={`flex cursor-pointer flex-col items-center gap-4 rounded-2xl border-2 p-10 transition-all duration-200 hover:scale-[1.02] active:scale-[0.97] ${
+              className={`flex cursor-pointer flex-col items-center gap-4 rounded-2xl border-2 p-6 transition-all duration-200 hover:scale-[1.02] active:scale-[0.97] sm:p-8 lg:p-10 ${
                 selected
                   ? "border-blue-500 bg-blue-50 shadow-md shadow-blue-100"
                   : "border-gray-200 bg-white shadow-sm hover:border-blue-300 hover:shadow-md hover:shadow-gray-200"
               }`}
             >
               <Icon
-                className={`h-16 w-16 transition-colors ${
+                className={`h-14 w-14 transition-colors lg:h-16 lg:w-16 ${
                   selected ? "text-blue-600" : "text-gray-600"
                 }`}
               />
               <span
-                className={`text-xl font-semibold ${
+                className={`text-lg font-semibold sm:text-xl ${
                   selected ? "text-blue-700" : "text-gray-700"
                 }`}
               >
