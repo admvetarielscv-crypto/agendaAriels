@@ -1,4 +1,4 @@
-import { Sun, Sunset } from "lucide-react";
+import { CheckCircle } from "lucide-react";
 import type { FormData } from "../BookingWizard";
 
 interface AddonsStepProps {
@@ -11,8 +11,20 @@ interface AddonsStepProps {
 }
 
 const OPTIONS = [
-  { value: "9-11" as const, label: "9:00 am – 11:00 am", sub: "Turno mañana", icon: Sun },
-  { value: "11-14" as const, label: "11:00 am – 2:00 pm", sub: "Turno mediodía", icon: Sunset },
+  {
+    value: "9-11" as const,
+    label: "9:00 am – 11:00 am",
+    sub: "Turno mañana",
+    image: "/images/pickUpTime/morning.webp",
+    alt: "Horario de mañana",
+  },
+  {
+    value: "11-14" as const,
+    label: "11:00 am – 2:00 pm",
+    sub: "Turno mediodía",
+    image: "/images/pickUpTime/noon.webp",
+    alt: "Horario de mediodía",
+  },
 ];
 
 export function AddonsStep({ formData, update, onNext }: AddonsStepProps) {
@@ -27,39 +39,52 @@ export function AddonsStep({ formData, update, onNext }: AddonsStepProps) {
         Elige un horario de recojo
       </h2>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6">
-        {OPTIONS.map(({ value, label, sub, icon: Icon }) => {
+        {OPTIONS.map(({ value, label, sub, image, alt }) => {
           const selected = formData.timeRange === value;
           return (
             <button
               key={value}
               onClick={() => handleSelect(value)}
-              className={`flex cursor-pointer flex-col items-center gap-4 rounded-2xl border-2 p-6 transition-all duration-200 hover:scale-[1.02] active:scale-[0.97] sm:p-8 lg:p-10 ${
+              className={`group relative flex cursor-pointer flex-col overflow-hidden rounded-2xl border-2 bg-white text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 active:translate-y-0 active:scale-[0.98] ${
                 selected
-                  ? "border-blue-500 bg-blue-50 shadow-md shadow-blue-100"
-                  : "border-gray-200 bg-white shadow-sm hover:border-blue-300 hover:shadow-md hover:shadow-gray-200"
+                  ? "border-blue-500 shadow-lg shadow-blue-100"
+                  : "border-gray-200 shadow-sm hover:border-blue-300"
               }`}
             >
-              <Icon
-                className={`h-14 w-14 transition-colors lg:h-16 lg:w-16 ${
-                  selected ? "text-blue-600" : "text-gray-600"
-                }`}
-              />
-              <span
-                className={`text-lg font-semibold sm:text-xl ${
-                  selected ? "text-blue-700" : "text-gray-700"
-                }`}
-              >
-                {label}
-              </span>
-              <span
-                className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                  selected
-                    ? "bg-orange-100 text-orange-700"
-                    : "bg-gray-100 text-gray-500"
-                }`}
-              >
-                {sub}
-              </span>
+              <div className="relative aspect-[5/3] w-full overflow-hidden">
+                <img
+                  src={image}
+                  alt={alt}
+                  loading="lazy"
+                  className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                />
+                <div className={`absolute inset-0 transition-colors duration-300 ${
+                  selected ? "bg-blue-500/20" : "bg-gradient-to-t from-black/40 to-transparent"
+                }`} />
+                {selected && (
+                  <span className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-blue-600 text-white shadow-md">
+                    <CheckCircle className="h-5 w-5 fill-white text-blue-600" />
+                  </span>
+                )}
+              </div>
+              <div className="flex flex-col items-center gap-2 px-5 py-5 sm:px-6 sm:py-6">
+                <span
+                  className={`text-lg font-semibold sm:text-xl ${
+                    selected ? "text-blue-700" : "text-gray-700"
+                  }`}
+                >
+                  {label}
+                </span>
+                <span
+                  className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                    selected
+                      ? "bg-orange-100 text-orange-700"
+                      : "bg-gray-100 text-gray-500"
+                  }`}
+                >
+                  {sub}
+                </span>
+              </div>
             </button>
           );
         })}
