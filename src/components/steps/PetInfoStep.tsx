@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { ShowerHead, Scissors, Wind, Upload, Trash2, Droplets, ShieldAlert, Smile } from "lucide-react";
+import { ShowerHead, Scissors, Wind, Upload, Trash2, Sparkles, BriefcaseMedical, Droplets } from "lucide-react";
 import type { FormData } from "../BookingWizard";
 
 interface PetInfoStepProps {
@@ -31,9 +31,9 @@ const CAT_SERVICE_OPTIONS = [
 ];
 
 const BATH_OPTIONS = [
-  { value: "hidratado_premium" as const, label: "Hidratado Premium", description: "Hidratación intensa con productos premium para un pelaje sedoso y brillante.", icon: Droplets },
-  { value: "medicado" as const, label: "Baño Medicado", description: "Tratamiento con shampoo medicado para pieles sensibles o con afecciones dermatológicas.", icon: ShieldAlert },
-  { value: "tradicional" as const, label: "Baño Tradicional", description: "Limpieza general con productos estándar, ideal para mascotas sin condiciones especiales.", icon: Smile },
+  { value: "hidratado_premium" as const, label: "Hidratado Premium", description: "Hidratación intensa con productos premium para un pelaje sedoso y brillante.", icon: Sparkles },
+  { value: "medicado" as const, label: "Baño Medicado", description: "Tratamiento con shampoo medicado para pieles sensibles o con afecciones dermatológicas.", icon: BriefcaseMedical },
+  { value: "tradicional" as const, label: "Baño Tradicional", description: "Limpieza general con productos estándar, ideal para mascotas sin condiciones especiales.", icon: Droplets },
 ];
 
 const EXTRA_OPTIONS = [

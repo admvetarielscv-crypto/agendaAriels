@@ -15,14 +15,14 @@ const OPTIONS = [
     value: "9-11" as const,
     label: "9:00 am – 11:00 am",
     sub: "Turno mañana",
-    image: "/images/pickUpTime/morning.webp",
+    timeKey: "morning" as const,
     alt: "Horario de mañana",
   },
   {
     value: "11-14" as const,
     label: "11:00 am – 2:00 pm",
     sub: "Turno mediodía",
-    image: "/images/pickUpTime/noon.webp",
+    timeKey: "noon" as const,
     alt: "Horario de mediodía",
   },
 ];
@@ -33,14 +33,17 @@ export function AddonsStep({ formData, update, onNext }: AddonsStepProps) {
     onNext();
   };
 
+  const petType = formData.petType === "cat" ? "cat" : "dog";
+
   return (
     <div>
       <h2 className="mb-8 text-center text-2xl font-bold tracking-tight text-gray-800">
         Elige un horario de recojo
       </h2>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6">
-        {OPTIONS.map(({ value, label, sub, image, alt }) => {
+        {OPTIONS.map(({ value, label, sub, timeKey, alt }) => {
           const selected = formData.timeRange === value;
+          const image = `/images/pickUpTime/${petType}/${timeKey}.webp`;
           return (
             <button
               key={value}
@@ -56,6 +59,11 @@ export function AddonsStep({ formData, update, onNext }: AddonsStepProps) {
                   src={image}
                   alt={alt}
                   loading="lazy"
+                  onError={(e) => {
+                    if (petType !== "dog") {
+                      e.currentTarget.src = `/images/pickUpTime/dog/${timeKey}.webp`;
+                    }
+                  }}
                   className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
                 />
                 <div className={`absolute inset-0 transition-colors duration-300 ${
