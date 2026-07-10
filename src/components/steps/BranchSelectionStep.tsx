@@ -1,5 +1,6 @@
 import { MapPin, CheckCircle } from "lucide-react";
 import type { FormData } from "../BookingWizard";
+import { BRANCHES } from "../../data/branches";
 
 interface BranchSelectionStepProps {
   formData: FormData;
@@ -7,33 +8,12 @@ interface BranchSelectionStepProps {
   onNext: () => void;
 }
 
-const BRANCHES = [
-  {
-    value: "san_martin" as const,
-    label: "Sede San Martín de Porres",
-    image: "/images/sedes/sanMartin.webp",
-    address: "Av. Proceres 115",
-  },
-  {
-    value: "los_olivos" as const,
-    label: "Sede Los Olivos",
-    image: "/images/sedes/olivos.webp",
-    address: "Av. Beta Mz Ñ lote 1",
-  },
-  {
-    value: "san_miguel" as const,
-    label: "Sede San Miguel",
-    image: "/images/sedes/sanMiguel.webp",
-    address: "Av. Brigida Silva 272",
-  },
-];
-
 export function BranchSelectionStep({ formData, update, onNext }: BranchSelectionStepProps) {
   const selected = formData.branch;
 
   return (
     <div>
-      <h2 className="mb-2 text-center text-2xl font-bold tracking-tight text-gray-800">
+      <h2 className="mb-2 text-center text-3xl font-bold tracking-tight text-gray-800">
         Seleccione su sede más cercana
       </h2>
       <p className="mb-8 text-center text-sm text-gray-500">
@@ -52,7 +32,7 @@ export function BranchSelectionStep({ formData, update, onNext }: BranchSelectio
                   : "border-gray-200 shadow-sm hover:border-blue-300 hover:shadow-md"
               }`}
             >
-              <div className="relative h-52 overflow-hidden">
+              <div className="relative aspect-[5/4] w-full overflow-hidden">
                 <img
                   src={image}
                   alt={label}

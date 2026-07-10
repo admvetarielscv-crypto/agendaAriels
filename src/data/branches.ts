@@ -1,0 +1,35 @@
+export interface Branch {
+  value: "san_martin" | "los_olivos" | "san_miguel";
+  label: string;
+  image: string;
+  address: string;
+  phone: string;
+}
+
+export const BRANCHES: Branch[] = [
+  {
+    value: "san_martin",
+    label: "Sede San Martín de Porres",
+    image: "/images/sedes/sanMartin.webp",
+    address: "Av. Proceres 115",
+    phone: "+51 986 985 047",
+  },
+  {
+    value: "los_olivos",
+    label: "Sede Los Olivos",
+    image: "/images/sedes/olivos.webp",
+    address: "Av. Beta Mz Ñ lote 1",
+    phone: "+51 932 719 342",
+  },
+  {
+    value: "san_miguel",
+    label: "Sede San Miguel",
+    image: "/images/sedes/sanMiguel.webp",
+    address: "Av. Brigida Silva 272",
+    phone: "+51 954 599 221",
+  },
+];
+
+export const BRANCH_BY_VALUE: Record<string, Branch> = Object.fromEntries(
+  BRANCHES.map((b) => [b.value, b]),
+);

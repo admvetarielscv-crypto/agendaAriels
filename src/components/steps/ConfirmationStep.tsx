@@ -1,8 +1,21 @@
 import { useState } from "react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { CheckCircle, MapPin, ExternalLink } from "lucide-react";
+import { CheckCircle, MapPin, ExternalLink, Loader2, AlertCircle, Phone } from "lucide-react";
 import type { FormData, PetData } from "../BookingWizard";
+import { BRANCH_BY_VALUE } from "../../data/branches";
+import {
+  PET_TYPE_LABELS,
+  SERVICE_LABELS,
+  SIZE_LABELS,
+  TIME_LABELS,
+  EXTRA_LABELS,
+  CORTE_LABELS,
+  BATH_LABELS,
+  PERFUME_LABELS,
+  BRANCH_LABELS,
+} from "../../data/labels";
+import { submitBooking } from "../../services/submitBooking";
 
 interface ConfirmationStepProps {
   formData: FormData;
@@ -13,31 +26,7 @@ interface ConfirmationStepProps {
   onContinue?: () => void;
 }
 
-const PET_TYPE_LABELS: Record<string, string> = { dog: "Perro", cat: "Gato" };
-  const SERVICE_LABELS: Record<string, string> = { bath: "Baño", bath_cut: "Baño + Corte", bath_deslanado: "Baño + Deslanado" };
-const SIZE_LABELS: Record<string, string> = { small: "Pequeño", medium: "Mediano", large: "Grande" };
-const TIME_LABELS: Record<string, string> = { "9-11": "9:00 am – 11:00 am", "11-14": "11:00 am – 2:00 pm" };
-const EXTRA_LABELS: Record<string, string> = { deworming: "Desparasitación", antiflea: "Antipulgas", vaccine: "Vacuna" };
-const CORTE_LABELS: Record<string, string> = {
-  rapado: "Corte Rapado",
-  rebaje: "Rebaje Comercial (1 cm de largo parejo)",
-  tijera: "Corte con Tijera / Estilo de la raza",
-};
-const BATH_LABELS: Record<string, string> = {
-  hidratado_premium: "Hidratado Premium",
-  medicado: "Baño Medicado",
-  tradicional: "Baño Tradicional",
-};
-const PERFUME_LABELS: Record<string, string> = {
-  fruital: "🍓 Frutal",
-  floral: "🌸 Floral",
-  fresco: "🍃 Fresco",
-};
-const BRANCH_LABELS: Record<string, string> = {
-  san_martin: "San Martín de Porres",
-  los_olivos: "Los Olivos",
-  san_miguel: "San Miguel",
-};
+type SubmitState = "idle" | "loading" | "success" | "error";
 
 function formatDate(dateStr: string) {
   const d = new Date(dateStr + "T12:00:00");
@@ -93,9 +82,25 @@ function PetCard({ pet, index }: { pet: PetData; index: number }) {
 }
 
 export function ConfirmationStep({ formData, onBack: _onBack }: ConfirmationStepProps) {
-  const [submitted, setSubmitted] = useState(false);
+  const [submitState, setSubmitState] = useState<SubmitState>("idle");
+  const [submitError, setSubmitError] = useState<string>("");
 
-  if (submitted) {
+  const branchPhone = formData.branch ? BRANCH_BY_VALUE[formData.branch]?.phone : null;
+
+  const handleSubmit = async () => {
+    if (submitState === "loading") return;
+    setSubmitState("loading");
+    setSubmitError("");
+    const result = await submitBooking(formData);
+    if (result.ok) {
+      setSubmitState("success");
+    } else {
+      setSubmitState("error");
+      setSubmitError(result.error ?? "Ocurrió un error inesperado");
+    }
+  };
+
+  if (submitState === "success") {
     return (
       <div className="flex flex-col items-center gap-6 py-10">
         <CheckCircle className="h-24 w-24 text-green-500" />
@@ -105,6 +110,37 @@ export function ConfirmationStep({ formData, onBack: _onBack }: ConfirmationStep
         <p className="text-center text-gray-500">
           Su mascotita ya fue agendada. Estaremos en contacto con usted cuando pasen por su domicilio. Recordarle que la movilidad sólo podrá esperar fuera de su domicilio 5 minutos luego de la primera llamada 🐾🐶🐱
         </p>
+      </div>
+    );
+  }
+
+  if (submitState === "error") {
+    return (
+      <div className="flex flex-col items-center gap-6 py-10">
+        <AlertCircle className="h-20 w-20 text-red-500" />
+        <h2 className="text-2xl font-bold tracking-tight text-gray-800">
+          No se pudo enviar la solicitud
+        </h2>
+        <p className="text-center text-sm text-gray-500">
+          {submitError}
+        </p>
+        <div className="flex flex-col gap-3 sm:flex-row">
+          <button
+            onClick={() => setSubmitState("idle")}
+            className="cursor-pointer rounded-xl bg-blue-600 px-6 py-3 text-base font-semibold text-white shadow-md transition-all hover:bg-blue-700 hover:shadow-lg active:scale-[0.98]"
+          >
+            Reintentar
+          </button>
+          {branchPhone && (
+            <a
+              href={`tel:${branchPhone.replace(/\s/g, "")}`}
+              className="flex cursor-pointer items-center justify-center gap-2 rounded-xl border-2 border-blue-200 bg-white px-6 py-3 text-base font-semibold text-blue-700 transition-all hover:border-blue-300 hover:bg-blue-50 active:scale-[0.98]"
+            >
+              <Phone className="h-5 w-5" />
+              Llámanos
+            </a>
+          )}
+        </div>
       </div>
     );
   }
@@ -189,10 +225,22 @@ export function ConfirmationStep({ formData, onBack: _onBack }: ConfirmationStep
       </div>
 
       <button
-        onClick={() => setSubmitted(true)}
-        className="w-full cursor-pointer rounded-xl bg-blue-600 py-4 text-lg font-bold text-white shadow-md transition-all hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-200/50 active:scale-[0.98]"
+        onClick={handleSubmit}
+        disabled={submitState === "loading"}
+        className={`w-full rounded-xl py-4 text-lg font-bold text-white shadow-md transition-all ${
+          submitState === "loading"
+            ? "cursor-wait bg-blue-400"
+            : "cursor-pointer bg-blue-600 hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-200/50 active:scale-[0.98]"
+        }`}
       >
-        Confirmar Solicitud
+        {submitState === "loading" ? (
+          <span className="flex items-center justify-center gap-2">
+            <Loader2 className="h-5 w-5 animate-spin" />
+            Enviando...
+          </span>
+        ) : (
+          "Confirmar Solicitud"
+        )}
       </button>
     </div>
   );
