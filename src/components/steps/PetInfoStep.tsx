@@ -125,7 +125,7 @@ export function PetInfoStep({ formData, update, onNext }: PetInfoStepProps) {
         <p className="mb-1 text-xs font-semibold uppercase tracking-[0.18em] text-orange-600">
           Servicio principal
         </p>
-        <h2 className="text-2xl font-bold tracking-tight text-[#1A2238] lg:text-3xl">
+        <h2 className="text-3xl font-bold tracking-tight text-[#1A2238] lg:text-3xl">
           ¿Qué servicio necesita?
         </h2>
       </div>

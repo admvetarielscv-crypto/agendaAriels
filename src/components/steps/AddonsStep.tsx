@@ -37,7 +37,7 @@ export function AddonsStep({ formData, update, onNext }: AddonsStepProps) {
 
   return (
     <div>
-      <h2 className="mb-8 text-center text-2xl font-bold tracking-tight text-gray-800">
+      <h2 className="mb-8 text-center text-3xl font-bold tracking-tight text-gray-800">
         Elige un horario de recojo
       </h2>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6">
@@ -54,7 +54,7 @@ export function AddonsStep({ formData, update, onNext }: AddonsStepProps) {
                   : "border-gray-200 shadow-sm hover:border-blue-300"
               }`}
             >
-              <div className="relative aspect-[5/3] w-full overflow-hidden">
+              <div className="relative aspect-[5/4] w-full overflow-hidden">
                 <img
                   src={image}
                   alt={alt}

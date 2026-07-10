@@ -195,22 +195,17 @@ export function BookingWizard() {
 
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
-      <div className="w-full max-w-2xl lg:max-w-5xl 2xl:max-w-6xl rounded-2xl border-t-4 border-t-orange-500 bg-white shadow-xl">
+      <div className="w-full max-w-2xl lg:max-w-5xl 2xl:max-w-6xl overflow-hidden rounded-2xl bg-white shadow-xl">
+        <div className="h-3 bg-gradient-to-r from-blue-500 to-orange-400" />
         <div className="p-6 sm:p-8 lg:p-10">
           {/* Brand Header */}
-          <div className="mb-6">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-orange-500 text-lg font-bold text-white shadow-sm shadow-orange-200">
-                AC
-              </div>
-              <div>
-                <h1 className="text-lg font-bold leading-tight tracking-tight text-[#1A2238]">
-                  Ariels Clinics
-                </h1>
-                <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-orange-500">
-                  Estilismo &amp; Bienestar
-                </p>
-              </div>
+          <div className="mb-1">
+            <div className="flex items-center">
+              <img
+                  src="/logo.webp"
+                  alt="Referencia de corte"
+                  className="h-24"
+                />
             </div>
             <div className="mt-4 h-px w-full bg-[#E7E2D8]" />
           </div>

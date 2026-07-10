@@ -12,14 +12,14 @@ interface ServiceTypeStepProps {
 const OPTIONS = [
   {
     value: "dog" as const,
-    label: "Perro",
-    blurb: "Cuidado canino completo",
+    label: "Canino",
+    blurb: "Estilismo canino completo",
     image: "/images/petType/dog.webp",
     alt: "Perro recién bañado y cepillado",
   },
   {
     value: "cat" as const,
-    label: "Gato",
+    label: "Felino",
     blurb: "Estilismo felino a bajo estrés",
     image: "/images/petType/cat.webp",
     alt: "Gato con pelaje brillante tras el baño",
@@ -36,9 +36,9 @@ export function ServiceTypeStep({ formData, update, onNext }: ServiceTypeStepPro
     <div>
       <div className="mb-8 text-center">
         <p className="mb-1 text-xs font-semibold uppercase tracking-[0.18em] text-orange-600">
-          Ariels Clinics
+          Selecciona a tu peludito
         </p>
-        <h2 className="text-2xl font-bold tracking-tight text-[#1A2238]">
+        <h2 className="text-3xl font-bold tracking-tight text-[#1A2238]">
           ¿Qué tipo de mascota es?
         </h2>
       </div>

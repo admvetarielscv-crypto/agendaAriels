@@ -35,7 +35,7 @@ const OPTIONS = [
     value: "giant" as const,
     label: "Gigante",
     weight: "30 – 50 kg",
-    image: "/images/petBreed/pastorAleman.png",
+    image: "/images/petBreed/pastorAleman.webp",
     alt: "Mascota de raza gigante",
   },
 ];
@@ -52,8 +52,8 @@ export function OwnerInfoStep({ formData, update, onNext }: OwnerInfoStepProps) 
         <p className="mb-1 text-xs font-semibold uppercase tracking-[0.18em] text-orange-600">
           Tamaño
         </p>
-        <h2 className="text-2xl font-bold tracking-tight text-[#1A2238]">
-          ¿Qué tamaño tiene tu mascota?
+        <h2 className="text-3xl font-bold tracking-tight text-[#1A2238]">
+          ¿Qué tamaño tiene tu peludito?
         </h2>
       </div>
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 sm:gap-5">
