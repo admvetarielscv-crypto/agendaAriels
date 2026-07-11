@@ -164,16 +164,16 @@ export function PetInfoStep({ formData, update, onNext }: PetInfoStepProps) {
       </div>
 
       {/* Service Selection: Bath or Bath+Cut */}
-      <div className="mb-8 text-center">
+      <div className="mb-6 sm:mb-8 text-center">
         <p className="mb-1 text-xs font-semibold uppercase tracking-[0.18em] text-orange-600">
           Servicio principal
         </p>
-        <h2 className="text-3xl font-bold tracking-tight text-[#1A2238] lg:text-3xl">
+        <h2 className="text-[var(--text-step-title)] font-display font-bold tracking-tight text-[#1A2238]">
           ¿Qué servicio necesita?
         </h2>
       </div>
 
-      <div className="grid grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5">
         {SERVICE_OPTIONS.map(({ value, label, icon: Icon, image, alt }) => {
           const selected = formData.service === value;
           return (
