@@ -1,4 +1,9 @@
 import { useState } from "react";
+
+export interface ExtraService {
+  service: string;
+  variant?: string;
+}
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft } from "lucide-react";
 import { BranchSelectionStep } from "./steps/BranchSelectionStep";
@@ -14,7 +19,7 @@ import { ConfirmationStep } from "./steps/ConfirmationStep";
 export interface PetData {
   petType: "dog" | "cat";
   service: "bath" | "bath_cut" | "bath_deslanado";
-  extraServices: string[];
+  extraServices: ExtraService[];
   size: "small" | "medium" | "large" | "giant" | null;
   coat: "normal" | "knotted";
   petNotes: string;
@@ -30,7 +35,7 @@ export interface FormData {
   branch: "san_martin" | "los_olivos" | "san_miguel" | null;
   petType: "dog" | "cat" | null;
   service: "bath" | "bath_cut" | "bath_deslanado" | null;
-  extraServices: string[];
+  extraServices: ExtraService[];
   size: "small" | "medium" | "large" | "giant" | null;
   coat: "normal" | "knotted";
   petNotes: string;
@@ -63,7 +68,7 @@ export interface FormData {
 const INITIAL_PET_FIELDS = {
   petType: null as "dog" | "cat" | null,
   service: null as "bath" | "bath_cut" | "bath_deslanado" | null,
-  extraServices: [] as string[],
+  extraServices: [] as ExtraService[],
   size: null as "small" | "medium" | "large" | "giant" | null,
   coat: "normal" as "normal" | "knotted",
   petNotes: "",

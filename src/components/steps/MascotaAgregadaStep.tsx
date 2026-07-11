@@ -1,5 +1,6 @@
 import { CheckCircle } from "lucide-react";
 import type { FormData, PetData } from "../BookingWizard";
+import { formatExtraLabel } from "../../data/labels";
 
 interface MascotaAgregadaStepProps {
   formData: FormData;
@@ -13,7 +14,6 @@ interface MascotaAgregadaStepProps {
 const PET_TYPE_LABELS: Record<string, string> = { dog: "Perro", cat: "Gato" };
 const SERVICE_LABELS: Record<string, string> = { bath: "Baño", bath_cut: "Baño + Corte", bath_deslanado: "Baño + Deslanado" };
 const SIZE_LABELS: Record<string, string> = { small: "Pequeño", medium: "Mediano", large: "Grande" };
-const EXTRA_LABELS: Record<string, string> = { deworming: "Desparasitación", antiflea: "Antipulgas", vaccine: "Vacuna" };
 const PERFUME_LABELS: Record<string, string> = { fruital: "🍓 Frutal", floral: "🌸 Floral", fresco: "🍃 Fresco" };
 
 export function MascotaAgregadaStep({ formData, onAddAnother, onContinue }: MascotaAgregadaStepProps) {
@@ -34,7 +34,7 @@ export function MascotaAgregadaStep({ formData, onAddAnother, onContinue }: Masc
 
   const extraSummary =
     currentPet.extraServices.length > 0
-      ? currentPet.extraServices.map((s) => EXTRA_LABELS[s] || s).join(", ")
+      ? currentPet.extraServices.map(formatExtraLabel).join(", ")
       : null;
 
   const sizeSegment = currentPet.petType === "cat" || !currentPet.size ? null : SIZE_LABELS[currentPet.size];

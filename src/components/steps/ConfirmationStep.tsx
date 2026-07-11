@@ -9,7 +9,7 @@ import {
   SERVICE_LABELS,
   SIZE_LABELS,
   TIME_LABELS,
-  EXTRA_LABELS,
+  formatExtraLabel,
   CORTE_LABELS,
   BATH_LABELS,
   PERFUME_LABELS,
@@ -64,7 +64,7 @@ function PetCard({ pet, index }: { pet: PetData; index: number }) {
         {pet.extraServices && pet.extraServices.length > 0 && (
           <p>
             <span className="font-medium text-gray-700">Servicios adicionales:</span>{" "}
-            {pet.extraServices.map((s) => EXTRA_LABELS[s] || s).join(", ")}
+            {pet.extraServices.map(formatExtraLabel).join(", ")}
           </p>
         )}
         {pet.size && (
