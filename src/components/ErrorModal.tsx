@@ -63,9 +63,9 @@ export function ErrorModal({
             exit={{ opacity: 0, scale: 0.9, y: 10 }}
             transition={{ duration: 0.22, ease: "easeOut" }}
           >
-            <div className="flex max-h-[90vh] w-full flex-col items-center gap-5 sm:flex-row sm:gap-6">
+            <div className="flex max-h-[90vh] w-full flex-col items-center gap-5 sm:flex-row sm:gap-2">
               <motion.div
-                className="flex h-28 w-28 shrink-0 items-center justify-center sm:h-44 sm:w-44"
+                className="flex h-28 w-28 shrink-0 items-center justify-center sm:h-60 sm:w-60"
                 initial={{ y: 10, rotate: -2 }}
                 animate={{ y: 0, rotate: 0 }}
                 transition={{ duration: 0.4, ease: "easeOut" }}

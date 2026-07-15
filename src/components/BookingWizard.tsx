@@ -12,7 +12,6 @@ import { PetInfoStep } from "./steps/PetInfoStep";
 import { OwnerInfoStep } from "./steps/OwnerInfoStep";
 import { MascotaAgregadaStep } from "./steps/MascotaAgregadaStep";
 import { ScheduleStep } from "./steps/ScheduleStep";
-import { AddonsStep } from "./steps/AddonsStep";
 import { ReviewStep } from "./steps/ReviewStep";
 import { ConfirmationStep } from "./steps/ConfirmationStep";
 
@@ -87,7 +86,6 @@ const STEPS = [
   OwnerInfoStep,
   MascotaAgregadaStep,
   ScheduleStep,
-  AddonsStep,
   ReviewStep,
   ConfirmationStep,
 ] as const;
@@ -98,8 +96,7 @@ const STEP_LABELS = [
   "Servicio",
   "Tamaño",
   "Mascota Agregada",
-  "Fecha",
-  "Horario",
+  "Fecha y horario",
   "Tus datos",
   "Resumen",
 ];
