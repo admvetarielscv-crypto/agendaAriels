@@ -28,6 +28,11 @@ function labelOr(map: Record<string, string>, key: string | null | undefined): s
   return map[key] ?? key;
 }
 
+function buildMapsUrl(lat: number | null, lng: number | null): string | null {
+  if (lat == null || lng == null) return null;
+  return `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+}
+
 export function buildBookingPayload(formData: FormData) {
   const branch = formData.branch ? BRANCH_BY_VALUE[formData.branch] : null;
 
@@ -47,6 +52,7 @@ export function buildBookingPayload(formData: FormData) {
       extras: (pet.extraServices || []).map(formatExtraLabel),
       perfume: labelOr(PERFUME_LABELS, pet.perfume),
       notes: pet.petNotes || "-",
+      corteImage: pet.corteImage || null,
     })),
     date: formData.date ?? null,
     dateLabel: formData.date ? formatDate(formData.date) : "-",
@@ -55,6 +61,9 @@ export function buildBookingPayload(formData: FormData) {
     ownerDni: formData.ownerDni || "-",
     ownerPhone: formData.ownerPhone || "-",
     ownerAddress: formData.ownerAddress || "-",
+    ownerLat: formData.ownerLat,
+    ownerLng: formData.ownerLng,
+    mapsUrl: buildMapsUrl(formData.ownerLat, formData.ownerLng),
     hasHistory: formData.hasHistory,
     registeredPetName: formData.registeredPetName || "-",
     registeredPhone: formData.registeredPhone || "-",
@@ -73,7 +82,18 @@ export async function submitBooking(formData: FormData): Promise<SubmitResult> {
     return { ok: false, error: "URL del webhook no configurada" };
   }
 
-  const payload = buildBookingPayload(formData);
+  const { uploadImage } = await import("./uploadImage");
+
+  const petsWithUrls = await Promise.all(
+    formData.pets.map(async (pet) => {
+      if (!pet.corteImage) return pet;
+      const url = await uploadImage(pet.corteImage);
+      return { ...pet, corteImage: url ?? "" };
+    })
+  );
+
+  const formDataWithUrls: FormData = { ...formData, pets: petsWithUrls };
+  const payload = buildBookingPayload(formDataWithUrls);
 
   try {
     const response = await fetch(webhookUrl, {
