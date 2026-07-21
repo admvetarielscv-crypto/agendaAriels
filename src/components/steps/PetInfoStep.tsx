@@ -87,10 +87,10 @@ export function PetInfoStep({ formData, update, onNext }: PetInfoStepProps) {
 
   const handleContinue = () => {
     const found: string[] = [];
-    if (invalidPetName) found.push("El nombre de la mascota necesita al menos 3 letritas");
-    if (invalidService) found.push("Elegí un servicio principal (Baño o Baño y Corte)");
-    if (invalidBathType) found.push("Elegí un tipo de baño");
-    if (invalidCorteType) found.push("Elegí un tipo de corte");
+    if (invalidPetName) found.push("El nombre de la mascota necesita al menos 3 letras");
+    if (invalidService) found.push("Elige un servicio principal (Baño o Baño y Corte)");
+    if (invalidBathType) found.push("Elige un tipo de baño");
+    if (invalidCorteType) found.push("Elige un tipo de corte");
 
     if (found.length > 0) {
       setErrors(found);

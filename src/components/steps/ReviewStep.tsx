@@ -102,11 +102,14 @@ export function ReviewStep({ formData, update, onNext }: ReviewStepProps) {
 
   const handleHistorySelect = (hasHistory: boolean) => {
     update("hasHistory", hasHistory);
+    if (hasHistory) {
+      update("ownerPhone", "");
+    }
   };
 
   const isValid = () => {
     if (formData.hasHistory === true) {
-      return formData.ownerDni.trim() !== "" && formData.registeredPhone.trim() !== "";
+      return formData.ownerDni.trim() !== "" && formData.ownerName.trim() !== "" && formData.registeredPhone.trim() !== "";
     }
     if (formData.hasHistory === false) {
       const baseValid = formData.ownerDni.trim() !== "" && formData.ownerName.trim() !== "" && formData.ownerAddress.trim() !== "" && formData.ownerPhone.trim() !== "" && formData.registeredPetName.trim() !== "" && formData.petBirthDate.trim() !== "" && formData.petSpecies !== null && formData.petBreed.trim() !== "";
@@ -211,6 +214,18 @@ export function ReviewStep({ formData, update, onNext }: ReviewStepProps) {
 
         {formData.hasHistory === true && (
           <div className="space-y-4 rounded-2xl border border-gray-200 bg-gray-50 p-5">
+            <div>
+              <label className="mb-1 block text-sm font-medium text-gray-700">
+                Nombre completo del titular <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                value={formData.ownerName}
+                onChange={(e) => update("ownerName", e.target.value)}
+                placeholder="Ej: Juan Pérez"
+                className="w-full rounded-xl border border-gray-300 px-4 py-3 text-gray-800 outline-none transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+              />
+            </div>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div>
                 <label className="mb-1 block text-sm font-medium text-gray-700">
@@ -231,7 +246,10 @@ export function ReviewStep({ formData, update, onNext }: ReviewStepProps) {
                 <input
                   type="tel"
                   value={formData.registeredPhone}
-                  onChange={(e) => update("registeredPhone", e.target.value)}
+                  onChange={(e) => {
+                    update("registeredPhone", e.target.value);
+                    update("ownerPhone", e.target.value);
+                  }}
                   placeholder="Ej: 555-123-4567"
                   className="w-full rounded-xl border border-gray-300 px-4 py-3 text-gray-800 outline-none transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
                 />
