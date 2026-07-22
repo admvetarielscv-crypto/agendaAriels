@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import {
@@ -9,11 +9,12 @@ import {
   Phone,
   PhoneCall,
   Calendar,
+  CalendarClock,
   Clock,
-  Info,
+  LockKeyholeOpen,
   User,
   ShieldCheck,
-  Check,
+  CircleCheck,
   Scissors,
   Droplets,
   StickyNote,
@@ -22,6 +23,10 @@ import {
   Syringe,
   FlaskConical,
   Sparkles,
+  PawPrint,
+  Ruler,
+  Plus,
+  Trash2,
   type LucideIcon,
 } from "lucide-react";
 import type { FormData, PetData } from "../BookingWizard";
@@ -46,6 +51,7 @@ interface ConfirmationStepProps {
   onNext?: () => void;
   onAddAnother?: () => void;
   onContinue?: () => void;
+  onRemovePet?: (index: number) => void;
 }
 
 type SubmitState = "idle" | "loading" | "success" | "error";
@@ -76,7 +82,7 @@ const EXTRA_ICON: Record<string, LucideIcon> = {
 function ServiceItem({ icon: Icon, children }: { icon: LucideIcon; children: React.ReactNode }) {
   return (
     <li className="flex items-center gap-3 text-sm text-gray-700">
-      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-50 text-blue-600">
+      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#EFF6FF] text-[#2563EB]">
         <Icon className="h-4 w-4" />
       </span>
       <span className="leading-snug">{children}</span>
@@ -84,7 +90,7 @@ function ServiceItem({ icon: Icon, children }: { icon: LucideIcon; children: Rea
   );
 }
 
-function PetCard({ pet, index }: { pet: PetData; index: number }) {
+function PetCard({ pet, index, onRemove }: { pet: PetData; index: number; onRemove?: (index: number) => void }) {
   const name = pet.petName || `Mascota ${index + 1}`;
   const initials = name.slice(0, 1).toUpperCase();
   const subtitle = [
@@ -99,8 +105,18 @@ function PetCard({ pet, index }: { pet: PetData; index: number }) {
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: index * 0.05 }}
-      className="group flex flex-col gap-5 rounded-[22px] border border-gray-100/80 bg-white p-6 shadow-[0_10px_30px_-12px_rgba(29,78,216,0.15)] transition-all duration-250 ease-out hover:-translate-y-1 hover:shadow-[0_18px_40px_-12px_rgba(29,78,216,0.22)] sm:p-7"
+      className="group relative flex flex-col gap-5 rounded-[22px] border border-gray-100/80 bg-white p-6 shadow-[0_10px_30px_-12px_rgba(29,78,216,0.15)] transition-all duration-250 ease-out hover:-translate-y-1 hover:shadow-[0_18px_40px_-12px_rgba(29,78,216,0.22)] sm:p-7"
     >
+      {onRemove && (
+        <button
+          type="button"
+          onClick={(e) => { e.stopPropagation(); onRemove(index); }}
+          aria-label={`Eliminar a ${name}`}
+          className="absolute -right-2 -top-2 z-20 flex h-8 w-8 items-center justify-center rounded-full border border-gray-100 bg-white text-gray-400 shadow-md transition-colors hover:border-red-200 hover:bg-red-50 hover:text-red-600"
+        >
+          <Trash2 className="h-4 w-4" />
+        </button>
+      )}
       <div className="flex items-center gap-4">
         <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-brand-blue text-xl font-semibold text-white shadow-md shadow-blue-200/50">
           {initials}
@@ -120,7 +136,7 @@ function PetCard({ pet, index }: { pet: PetData; index: number }) {
           <ServiceItem icon={Scissors}>{CORTE_LABELS[pet.corteType]}</ServiceItem>
         )}
         {pet.service === "bath_cut" && pet.corteSpecs && (
-          <ServiceItem icon={StickyNote}>{pet.corteSpecs}</ServiceItem>
+          <ServiceItem icon={Ruler}>{pet.corteSpecs}</ServiceItem>
         )}
         {pet.service === "bath_cut" && pet.corteImage && (
           <li className="mt-1">
@@ -166,8 +182,8 @@ function SectionCard({
   return (
     <section className="rounded-[18px] border border-[#E8EEF7] bg-white p-6 shadow-[0_1px_3px_rgba(16,24,40,0.04),0_8px_24px_-12px_rgba(16,24,40,0.06)] sm:p-7">
       <div className="mb-5 flex items-center gap-2.5">
-        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-50 text-[#2563EB]">
-          <Icon className="h-4 w-4" />
+        <span className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-blue text-white">
+          <Icon className="h-5 w-5" />
         </span>
         <h3 className="text-base font-semibold text-gray-900">{title}</h3>
       </div>
@@ -176,15 +192,41 @@ function SectionCard({
   );
 }
 
-export function ConfirmationStep({ formData, onBack: _onBack }: ConfirmationStepProps) {
+export function ConfirmationStep({ formData, onBack: _onBack, onAddAnother, onRemovePet }: ConfirmationStepProps) {
   const [submitState, setSubmitState] = useState<SubmitState>("idle");
   const [submitError, setSubmitError] = useState<string>("");
+  const [petToRemove, setPetToRemove] = useState<{ index: number; name: string } | null>(null);
 
   const branch = formData.branch ? BRANCH_BY_VALUE[formData.branch] : null;
   const branchPhone = branch?.phone ?? null;
+  const hasNoPets = formData.pets.length === 0;
+
+  const handleRemoveRequest = (index: number) => {
+    const pet = formData.pets[index];
+    const name = pet?.petName || `Mascota ${index + 1}`;
+    setPetToRemove({ index, name });
+  };
+
+  const confirmRemove = () => {
+    if (petToRemove) {
+      onRemovePet?.(petToRemove.index);
+    }
+    setPetToRemove(null);
+  };
+
+  const cancelRemove = () => setPetToRemove(null);
+
+  useEffect(() => {
+    if (!petToRemove) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") cancelRemove();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [petToRemove]);
 
   const handleSubmit = async () => {
-    if (submitState === "loading") return;
+    if (submitState === "loading" || hasNoPets) return;
     setSubmitState("loading");
     setSubmitError("");
     const result = await submitBooking(formData);
@@ -306,20 +348,30 @@ export function ConfirmationStep({ formData, onBack: _onBack }: ConfirmationStep
         </motion.section>
       )}
 
-      <SectionCard title="Mascotas Agendadas" icon={Sparkles}>
-        {formData.pets.length === 0 ? (
-          <p className="text-sm text-gray-500">No hay mascotas registradas.</p>
-        ) : (
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {formData.pets.map((pet, i) => (
-              <PetCard key={i} pet={pet} index={i} />
-            ))}
-          </div>
-        )}
+      <SectionCard title="Mascotas Agendadas" icon={PawPrint}>
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {formData.pets.map((pet, i) => (
+            <PetCard key={i} pet={pet} index={i} onRemove={onRemovePet ? handleRemoveRequest : undefined} />
+          ))}
+          {onAddAnother && (
+            <button
+              type="button"
+              onClick={onAddAnother}
+              className="flex min-h-[200px] flex-col items-center justify-center gap-3 rounded-[22px] border-2 border-dashed border-gray-300 bg-white/50 transition-all duration-250 ease-out cursor-pointer hover:border-[#2563EB] hover:bg-[#F7FBFF] hover:-translate-y-1 hover:shadow-[0_14px_34px_-12px_rgba(29,78,216,0.15)]"
+            >
+              <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#EFF6FF] text-[#2563EB]">
+                <Plus className="h-6 w-6" />
+              </span>
+              <span className="text-sm font-medium text-gray-600">
+                Agregar otra mascota
+              </span>
+            </button>
+          )}
+        </div>
       </SectionCard>
 
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-2 lg:items-stretch">
-        <SectionCard title="Agenda" icon={Calendar}>
+        <SectionCard title="Agenda" icon={CalendarClock}>
         <div className="grid grid-cols-1 gap-1">
           <div className="flex items-start gap-4 rounded-[14px] border border-[#DCEBFF] bg-[#F7FBFF] p-3">
             <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#EFF6FF] text-[#2563EB]">
@@ -353,9 +405,7 @@ export function ConfirmationStep({ formData, onBack: _onBack }: ConfirmationStep
           </div>
           <div className="grid flex-1 grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5">
             <div className="flex items-start gap-3">
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#EFF6FF] text-[#2563EB]">
-                <User className="h-4 w-4" />
-              </span>
+              <span className="h-8 w-8 shrink-0" aria-hidden />
               <div className="min-w-0">
                 <p className="text-xs font-medium uppercase tracking-wide text-[#6B7280]">Nombre</p>
                 <p className="mt-1 truncate text-sm font-semibold text-[#0F172A]">{formData.ownerName || "-"}</p>
@@ -411,28 +461,40 @@ export function ConfirmationStep({ formData, onBack: _onBack }: ConfirmationStep
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        className="flex items-start gap-3 rounded-[18px] border border-blue-100 bg-blue-50/50 p-4"
+        className="relative mb-4 flex items-center gap-3 overflow-visible rounded-[18px] border border-[#CFE2FF] bg-[#F3F8FF] p-4"
       >
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-100 text-brand-blue">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-blue text-white">
           <ShieldCheck className="h-5 w-5" />
         </span>
-        <div>
-          <p className="text-sm font-medium text-gray-800">
+        <div className="flex-1 pr-24 sm:pr-28">
+          <p className="text-sm font-medium text-[#0F172A]">
             Tu reserva quedará confirmada al presionar el botón.
           </p>
           <p className="mt-0.5 text-sm text-gray-500">
             Te enviaremos una confirmación por WhatsApp con todos los detalles.
           </p>
         </div>
+        <div className="absolute right-0 top-1/2 z-10 -translate-y-[70%] translate-x-[10%]">
+          <motion.img
+            src="/images/vetMascot/copy.png"
+            alt="Asistente mascota"
+            className="h-28 w-28 object-contain drop-shadow-md sm:h-32 sm:w-32"
+            initial={{ opacity: 0, scale: 0.85, x: 12 }}
+            animate={{ opacity: 1, scale: 1, x: 0 }}
+            transition={{ duration: 0.3, delay: 0.15 }}
+          />
+        </div>
       </motion.div>
 
       <button
         onClick={handleSubmit}
-        disabled={submitState === "loading"}
+        disabled={submitState === "loading" || hasNoPets}
         className={`flex min-h-[60px] w-full items-center justify-center gap-2.5 rounded-2xl text-lg font-bold text-white transition-all ${
           submitState === "loading"
             ? "cursor-wait bg-blue-400"
-            : "cursor-pointer bg-brand-blue hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-200/50 hover:-translate-y-0.5 active:scale-[0.98]"
+            : hasNoPets
+              ? "cursor-not-allowed bg-gray-300"
+              : "cursor-pointer bg-brand-blue hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-200/50 hover:-translate-y-0.5 active:scale-[0.98]"
         }`}
       >
         {submitState === "loading" ? (
@@ -442,14 +504,69 @@ export function ConfirmationStep({ formData, onBack: _onBack }: ConfirmationStep
           </span>
         ) : (
           <>
-            <Check className="h-5 w-5" />
+            <CircleCheck className="h-7 w-7" />
             Confirmar Reserva
           </>
         )}
       </button>
-      <p className="text-center text-xs text-gray-500">
-        No se realizará ningún cobro en este momento.
-      </p>
+      {hasNoPets ? (
+        <p className="text-center text-xs text-gray-500">
+          Agrega al menos una mascota para continuar.
+        </p>
+      ) : (
+        <p className="flex justify-center items-center gap-1.5 text-center text-xs text-gray-500">
+          <LockKeyholeOpen className="h-4 w-4" />
+          No se realizará ningún cobro en este momento.
+        </p>
+      )}
+
+      <AnimatePresence>
+        {petToRemove && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm"
+            onClick={cancelRemove}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              className="w-full max-w-sm rounded-[20px] bg-white p-6 shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex flex-col items-center text-center">
+                <span className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-50 text-red-600">
+                  <Trash2 className="h-6 w-6" />
+                </span>
+                <h3 className="text-lg font-semibold text-gray-900">¿Eliminar mascota?</h3>
+                <p className="mt-1.5 text-sm text-gray-500">
+                  ¿Seguro que quieres eliminar a <span className="font-semibold text-gray-700">{petToRemove.name}</span> de tu reserva?
+                </p>
+                <div className="mt-6 flex w-full gap-3">
+                  <button
+                    type="button"
+                    onClick={cancelRemove}
+                    className="flex-1 cursor-pointer rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="button"
+                    onClick={confirmRemove}
+                    className="flex-1 cursor-pointer rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white shadow-md transition-colors hover:bg-red-700 active:scale-[0.98]"
+                  >
+                    Eliminar
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

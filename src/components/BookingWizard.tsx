@@ -201,6 +201,15 @@ export function BookingWizard() {
     setCurrentStep(5);
   };
 
+  const handleAddAnotherFromConfirmation = () => {
+    setFormData((prev) => ({ ...prev, ...INITIAL_PET_FIELDS }));
+    setCurrentStep(1);
+  };
+
+  const handleRemovePet = (index: number) => {
+    setFormData((prev) => ({ ...prev, pets: prev.pets.filter((_, i) => i !== index) }));
+  };
+
   const update = <K extends keyof FormData>(field: K, value: FormData[K]) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
@@ -256,8 +265,9 @@ export function BookingWizard() {
                   update={update}
                   onNext={handleNext}
                   onBack={handleBack}
-                  onAddAnother={handleAddAnother}
+                  onAddAnother={currentStep === 7 ? handleAddAnotherFromConfirmation : handleAddAnother}
                   onContinue={handleContinue}
+                  onRemovePet={currentStep === 7 ? handleRemovePet : undefined}
                 />
               </motion.div>
             </AnimatePresence>
