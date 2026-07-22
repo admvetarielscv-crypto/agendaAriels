@@ -182,7 +182,11 @@ export function BookingWizard() {
       if (prev === 4 && formData.petType === "cat") {
         return 2;
       }
-      return Math.max(prev - 1, 0);
+      const next = Math.max(prev - 1, 0);
+      if (next <= 1) {
+        setFormData((f) => ({ ...f, ...INITIAL_PET_FIELDS }));
+      }
+      return next;
     });
   };
 

@@ -28,9 +28,11 @@ export const EXTRA_LABELS: Record<string, string> = {
 };
 
 export const EXTRA_VARIANT_LABELS: Record<string, string> = {
-  "1m": "1 mes",
-  "3m": "3 meses",
-  "6m": "6 meses",
+  "1m_pipeta_fipforte": "Pipeta Fip Forte, 1 mes",
+  "1m_pipeta_xelamec": "Pipeta Xelamec, 1 mes",
+  "1m_pastilla_atrevia": "Pastilla Atrevia, 1 mes",
+  "1m_pastilla_simparica": "Pastilla Simparica, 1 mes",
+  "3m_bravecto": "Bravecto, 3 meses",
   sextuple: "Séxtuple",
   rabia: "Antirrábica",
   kc: "KC (Tos de las perreras)",
