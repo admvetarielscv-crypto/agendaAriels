@@ -10,6 +10,8 @@ interface MascotaAgregadaStepProps {
   onBack?: () => void;
   onAddAnother: () => void;
   onContinue: () => void;
+  continueLabel?: string;
+  isEditing?: boolean;
 }
 
 const PET_TYPE_LABELS: Record<string, string> = { dog: "Perro", cat: "Gato" };
@@ -17,7 +19,7 @@ const SERVICE_LABELS: Record<string, string> = { bath: "Baño", bath_cut: "Baño
 const SIZE_LABELS: Record<string, string> = { small: "Pequeño", medium: "Mediano", large: "Grande" };
 const PERFUME_LABELS: Record<string, string> = { fruital: "🍓 Frutal", floral: "🌸 Floral", fresco: "🍃 Fresco" };
 
-export function MascotaAgregadaStep({ formData, onAddAnother, onContinue }: MascotaAgregadaStepProps) {
+export function MascotaAgregadaStep({ formData, onAddAnother, onContinue, continueLabel, isEditing }: MascotaAgregadaStepProps) {
   const currentPet: PetData = {
     petType: formData.petType ?? "dog",
     service: formData.service ?? "bath",
@@ -56,7 +58,7 @@ export function MascotaAgregadaStep({ formData, onAddAnother, onContinue }: Masc
         </div>
       </div>
       <h2 className="text-center text-[var(--text-step-title)] font-display font-bold tracking-tight text-gray-800">
-        ¡Mascota agregada!
+        {isEditing ? "¡Mascota actualizada!" : "¡Mascota agregada!"}
       </h2>
       <p className="text-center text-lg font-semibold text-gray-700">
         {currentPet.petName || "Mascota"}
@@ -90,17 +92,19 @@ export function MascotaAgregadaStep({ formData, onAddAnother, onContinue }: Masc
       </div>
 
       <div className="mt-2 flex w-full flex-col gap-4">
-        <button
-          onClick={onAddAnother}
-          className="w-full cursor-pointer rounded-xl border-2 border-orange-500 bg-white py-4 text-lg font-semibold text-orange-600 shadow-sm transition-all hover:bg-orange-50 hover:shadow-md active:scale-[0.98]"
-        >
-          Agregar otra mascota
-        </button>
+        {!isEditing && (
+          <button
+            onClick={onAddAnother}
+            className="w-full cursor-pointer rounded-xl border-2 border-orange-500 bg-white py-4 text-lg font-semibold text-orange-600 shadow-sm transition-all hover:bg-orange-50 hover:shadow-md active:scale-[0.98]"
+          >
+            Agregar otra mascota
+          </button>
+        )}
         <button
           onClick={onContinue}
           className="w-full cursor-pointer rounded-xl bg-blue-600 py-4 text-lg font-semibold text-white shadow-md transition-all hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-200/50 active:scale-[0.98]"
         >
-          Continuar con el recojo
+          {continueLabel ?? "Continuar con el recojo"}
         </button>
       </div>
     </div>

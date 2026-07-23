@@ -27,6 +27,7 @@ import {
   Ruler,
   Plus,
   Trash2,
+  Pencil,
   type LucideIcon,
 } from "lucide-react";
 import type { FormData, PetData } from "../BookingWizard";
@@ -52,6 +53,7 @@ interface ConfirmationStepProps {
   onAddAnother?: () => void;
   onContinue?: () => void;
   onRemovePet?: (index: number) => void;
+  onEditPet?: (index: number) => void;
 }
 
 type SubmitState = "idle" | "loading" | "success" | "error";
@@ -90,9 +92,8 @@ function ServiceItem({ icon: Icon, children }: { icon: LucideIcon; children: Rea
   );
 }
 
-function PetCard({ pet, index, onRemove }: { pet: PetData; index: number; onRemove?: (index: number) => void }) {
+function PetCard({ pet, index, onRemove, onEdit }: { pet: PetData; index: number; onRemove?: (index: number) => void; onEdit?: (index: number) => void }) {
   const name = pet.petName || `Mascota ${index + 1}`;
-  const initials = name.slice(0, 1).toUpperCase();
   const subtitle = [
     PET_TYPE_LABELS[pet.petType],
     pet.size ? SIZE_LABELS[pet.size] : null,
@@ -107,19 +108,37 @@ function PetCard({ pet, index, onRemove }: { pet: PetData; index: number; onRemo
       transition={{ duration: 0.3, delay: index * 0.05 }}
       className="group relative flex flex-col gap-5 rounded-[22px] border border-gray-100/80 bg-white p-6 shadow-[0_10px_30px_-12px_rgba(29,78,216,0.15)] transition-all duration-250 ease-out hover:-translate-y-1 hover:shadow-[0_18px_40px_-12px_rgba(29,78,216,0.22)] sm:p-7"
     >
-      {onRemove && (
-        <button
-          type="button"
-          onClick={(e) => { e.stopPropagation(); onRemove(index); }}
-          aria-label={`Eliminar a ${name}`}
-          className="absolute -right-2 -top-2 z-20 flex h-8 w-8 items-center justify-center rounded-full border border-gray-100 bg-white text-gray-400 shadow-md transition-colors hover:border-red-200 hover:bg-red-50 hover:text-red-600"
-        >
-          <Trash2 className="h-4 w-4" />
-        </button>
+      {(onRemove || onEdit) && (
+        <div className="absolute -right-2 -top-2 z-20 flex gap-1.5">
+          {onEdit && (
+            <button
+              type="button"
+              onClick={(e) => { e.stopPropagation(); onEdit(index); }}
+              aria-label={`Editar a ${name}`}
+              className="flex h-8 w-8 items-center justify-center rounded-full border border-gray-100 bg-white text-gray-400 shadow-md transition-colors hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600"
+            >
+              <Pencil className="h-4 w-4" />
+            </button>
+          )}
+          {onRemove && (
+            <button
+              type="button"
+              onClick={(e) => { e.stopPropagation(); onRemove(index); }}
+              aria-label={`Eliminar a ${name}`}
+              className="flex h-8 w-8 items-center justify-center rounded-full border border-gray-100 bg-white text-gray-400 shadow-md transition-colors hover:border-red-200 hover:bg-red-50 hover:text-red-600"
+            >
+              <Trash2 className="h-4 w-4" />
+            </button>
+          )}
+        </div>
       )}
       <div className="flex items-center gap-4">
-        <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-brand-blue text-xl font-semibold text-white shadow-md shadow-blue-200/50">
-          {initials}
+        <div className="relative h-16 w-16 shrink-0">
+          <img
+            src={pet.petType === "cat" ? "/images/petType/cat.webp" : "/images/petType/dog.webp"}
+            alt={pet.petType === "cat" ? "Gato" : "Perro"}
+            className="h-16 w-16 rounded-full object-cover ring-2 ring-blue-100 shadow-md shadow-blue-200/50"
+          />
         </div>
         <div className="min-w-0">
           <p className="truncate text-xl font-bold tracking-tight text-gray-900">{name}</p>
@@ -192,7 +211,7 @@ function SectionCard({
   );
 }
 
-export function ConfirmationStep({ formData, onBack: _onBack, onAddAnother, onRemovePet }: ConfirmationStepProps) {
+export function ConfirmationStep({ formData, onBack: _onBack, onAddAnother, onRemovePet, onEditPet }: ConfirmationStepProps) {
   const [submitState, setSubmitState] = useState<SubmitState>("idle");
   const [submitError, setSubmitError] = useState<string>("");
   const [petToRemove, setPetToRemove] = useState<{ index: number; name: string } | null>(null);
@@ -351,7 +370,7 @@ export function ConfirmationStep({ formData, onBack: _onBack, onAddAnother, onRe
       <SectionCard title="Mascotas Agendadas" icon={PawPrint}>
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {formData.pets.map((pet, i) => (
-            <PetCard key={i} pet={pet} index={i} onRemove={onRemovePet ? handleRemoveRequest : undefined} />
+            <PetCard key={i} pet={pet} index={i} onRemove={onRemovePet ? handleRemoveRequest : undefined} onEdit={onEditPet} />
           ))}
           {onAddAnother && (
             <button

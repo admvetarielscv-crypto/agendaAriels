@@ -103,6 +103,8 @@ const STEP_LABELS = [
 
 export function BookingWizard() {
   const [currentStep, setCurrentStep] = useState(0);
+  const [addFromConfirm, setAddFromConfirm] = useState(false);
+  const [editIndex, setEditIndex] = useState<number | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -158,7 +160,13 @@ export function BookingWizard() {
       bathType: formData.bathType,
       perfume: formData.perfume,
     };
-    setFormData((prev) => ({ ...prev, pets: [...prev.pets, pet] }));
+    setFormData((prev) => ({
+      ...prev,
+      pets:
+        editIndex !== null
+          ? prev.pets.map((p, i) => (i === editIndex ? pet : p))
+          : [...prev.pets, pet],
+    }));
   };
 
   const handleNext = () => {
@@ -172,6 +180,15 @@ export function BookingWizard() {
   };
 
   const handleBack = () => {
+    // Si estaba agregando o editando una mascota desde el resumen, cancelar el modo:
+    // descartar cambios y volver directamente al resumen (paso 8).
+    if (addFromConfirm) {
+      setAddFromConfirm(false);
+      setEditIndex(null);
+      setFormData((f) => ({ ...f, ...INITIAL_PET_FIELDS }));
+      setCurrentStep(7);
+      return;
+    }
     setCurrentStep((prev) => {
       if (prev === 5) {
         setFormData((f) => ({ ...f, pets: f.pets.slice(0, -1) }));
@@ -190,24 +207,59 @@ export function BookingWizard() {
     });
   };
 
+  const handleContinue = () => {
+    saveCurrentPet();
+    if (addFromConfirm) {
+      // Venía agregando o editando una mascota desde el resumen: volver directo al resumen.
+      setAddFromConfirm(false);
+      setEditIndex(null);
+      setCurrentStep(7);
+    } else {
+      setCurrentStep(5);
+    }
+  };
+
   const handleAddAnother = () => {
     saveCurrentPet();
     setFormData((prev) => ({ ...prev, ...INITIAL_PET_FIELDS }));
+    setEditIndex(null);
     setCurrentStep(1);
-  };
-
-  const handleContinue = () => {
-    saveCurrentPet();
-    setCurrentStep(5);
   };
 
   const handleAddAnotherFromConfirmation = () => {
     setFormData((prev) => ({ ...prev, ...INITIAL_PET_FIELDS }));
+    setAddFromConfirm(true);
+    setEditIndex(null);
     setCurrentStep(1);
+  };
+
+  const handleEditPet = (index: number) => {
+    const pet = formData.pets[index];
+    if (!pet) return;
+    setFormData((prev) => ({
+      ...prev,
+      ...INITIAL_PET_FIELDS,
+      petType: pet.petType,
+      service: pet.service,
+      extraServices: pet.extraServices,
+      size: pet.size,
+      coat: pet.coat,
+      petNotes: pet.petNotes,
+      petName: pet.petName,
+      corteType: pet.corteType,
+      corteSpecs: pet.corteSpecs,
+      corteImage: pet.corteImage,
+      bathType: pet.bathType,
+      perfume: pet.perfume,
+    }));
+    setEditIndex(index);
+    setAddFromConfirm(true);
+    setCurrentStep(2);
   };
 
   const handleRemovePet = (index: number) => {
     setFormData((prev) => ({ ...prev, pets: prev.pets.filter((_, i) => i !== index) }));
+    if (editIndex === index) setEditIndex(null);
   };
 
   const update = <K extends keyof FormData>(field: K, value: FormData[K]) => {
@@ -268,6 +320,8 @@ export function BookingWizard() {
                   onAddAnother={currentStep === 7 ? handleAddAnotherFromConfirmation : handleAddAnother}
                   onContinue={handleContinue}
                   onRemovePet={currentStep === 7 ? handleRemovePet : undefined}
+                  onEditPet={currentStep === 7 ? handleEditPet : undefined}
+                  {...(addFromConfirm ? { continueLabel: editIndex !== null ? "Finalizar edición" : "Finalizar y volver al resumen", isEditing: editIndex !== null } : {})}
                 />
               </motion.div>
             </AnimatePresence>
